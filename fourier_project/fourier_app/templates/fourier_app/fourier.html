@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Serie de Fourier Truncada</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Serie de Fourier Truncada</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <label for="function">Función (en términos de t, por ejemplo sin(t), t^2):</label>
+        <input type="text" name="function" value="{{ function|default:'sin(t)' }}" required>
+        <br>
+        <label for="period">Periodo (T):</label>
+        <input type="number" name="period" step="0.1" value="{{ T | default:2 }}">
+        <br>
+        <label for="terms">Número de términos (N):</label>
+        <input type="number" name="terms" min="1" value="{{ N|default:5 }}">
+        <br>
+        <button type="submit">Calcular</button>
+    </form>
+
+    {% if t_values and f_values %}
+    <h2>Serie truncada con {{ N }} términos</h2>
+    <canvas id="fourierChart"></canvas>
+    <script>
+        var ctx = document.getElementById('fourierChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ t_values }},
+                datasets: [{
+                    label: 'Aproximación de Fourier',
+                    data: {{ f_values }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 't' } },
+                    y: { title: { display: true, text: 'f(t)' } }
+                }
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
