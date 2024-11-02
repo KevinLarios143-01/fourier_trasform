@@ -1,51 +1,274 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Serie de Fourier Truncada</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h1>Serie de Fourier Truncada</h1>
-    
-    <form method="POST">
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Serie de Fourier</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  </head>
+  <body>
+    <h2>
+        Parte I - Series de Fourier
+    </h2>
+    <form method="POST" action="{% url 'fourier_view' %}">
         {% csrf_token %}
-        <label for="function">Función (en términos de t, por ejemplo sin(t), t^2):</label>
-        <input type="text" name="function" value="{{ function|default:'sin(t)' }}" required>
-        <br>
-        <label for="period">Periodo (T):</label>
-        <input type="number" name="period" step="0.1" value="{{ T | default:2 }}">
-        <br>
-        <label for="terms">Número de términos (N):</label>
-        <input type="number" name="terms" min="1" value="{{ N|default:5 }}">
-        <br>
-        <button type="submit">Calcular</button>
+        
+        <!-- Primera Parte de la Función -->
+        <label for="function1">Función 1:</label>
+        <input type="text" name="function1" id="function1" />
+        
+        <label for="intervalo1">Intervalo 1:</label>
+        <input type="text" name="intervalo1" id="intervalo1" />
+        <br><br>
+    
+        <!-- Segunda Parte de la Función -->
+        <label for="function2">Función 2:</label>
+        <input type="text" name="function2" id="function2" />
+        
+        <label for="intervalo2">Intervalo 2:</label>
+        <input type="text" name="intervalo2" id="intervalo2" />
+        <br><br>
+    
+        <!-- Tercera Parte de la Función -->
+        <label for="function3">Función 3:</label>
+        <input type="text" name="function3" id="function3" />
+        
+        <label for="intervalo3">Intervalo 3:</label>
+        <input type="text" name="intervalo3" id="intervalo3" />
+        <br><br>
+    
+        <button type="submit">Generar Serie de Fourier</button>
     </form>
+    
+    <div style="width: 1000px; height=400px">
+      {% if t_values %}
+      <ul>
+        <li><h5>Período: {{ T }}</h5></li>
+        <li>
+            <h5>Coeficientes de la Serie de Fourier: <br>
+            a_0 = {{a0_3}}, <br>
+            a_n = {{an_3}}, <br>
+            b_n = {{bn_3}}
+            </h5>
+        </li>
+        <li><h5>Valor de N: {{ N_3 }}</h5></li>
+        <li><h5>Ecuación de la serie de Fourier Trigonométrica:<br> 
+            {{ fourier_equation_3 }}
+        </h5></li>
+    </ul>
+      <canvas id="fourierChart" width="800" height="400"></canvas>
+      <script>
+        const ctx = document.getElementById('fourierChart').getContext('2d');
+        const tValues = {{ t_values|safe }};
+        const originalValues = {{ original_values|safe }};
+        const fValues = {{ f_values_3|safe }};
+        const fValuesTeorico = {{ f_values_teorico_3|safe }};
 
-    {% if t_values and f_values %}
-    <h2>Serie truncada con {{ N }} términos</h2>
-    <canvas id="fourierChart"></canvas>
-    <script>
-        var ctx = document.getElementById('fourierChart').getContext('2d');
-        var chart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ t_values }},
-                datasets: [{
-                    label: 'Aproximación de Fourier',
-                    data: {{ f_values }},
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false,
-                }]
+                labels: tValues,
+                datasets: [
+                    {
+                        label: 'Función Original',
+                        data: originalValues,
+                        borderColor: 'rgba(255, 0, 0)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Aproximación de Fourier',
+                        data: fValues,
+                        borderColor: 'rgba(18, 0, 118)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Aproximación de Fourier Marco Teórico',
+                        data: fValuesTeorico,
+                        borderColor: 'rgba(249, 245, 0)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    }
+                ]
             },
             options: {
                 scales: {
-                    x: { title: { display: true, text: 't' } },
-                    y: { title: { display: true, text: 'f(t)' } }
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Tiempo (t)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amplitud'
+                        }
+                    }
                 }
             }
         });
-    </script>
-    {% endif %}
-</body>
+      </script>
+      {% endif %}
+    </div>
+    <div style="width: 1000px; height=400px">
+      {% if t_values %}
+      <ul>
+        <li><h5>Período: {{ T }}</h5></li>
+        <li>
+            <h5>Coeficientes de la Serie de Fourier: <br>
+            a_0 = {{a0_5}}, <br>
+            a_n = {{an_5}}, <br>
+            b_n = {{bn_5}}
+            </h5>
+        </li>
+        <li><h5>Valor de N: {{ N_5 }}</h5></li>
+        <li><h5>Ecuación de la serie de Fourier Trigonométrica:<br> 
+            {{ fourier_equation_5 }}
+        </h5></li>
+    </ul>
+      <div>
+        <canvas id="fourierChart2" width="800" height="400"></canvas>
+      </div>
+      <script>
+        const ctx_1 = document.getElementById('fourierChart2').getContext('2d');
+        const tValues2 = {{ t_values|safe }};
+        const originalValues2 = {{ original_values|safe }};
+        const fValues5 = {{ f_values_5|safe }};
+        const fValuesTeorico5 = {{ f_values_teorico_5|safe }};
+
+        new Chart(ctx_1, {
+            type: 'line',
+            data: {
+                labels: tValues2,
+                datasets: [
+                    {
+                        label: 'Función Original',
+                        data: originalValues2,
+                        borderColor: 'rgba(255, 0, 0)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Aproximación de Fourier',
+                        data: fValues5,
+                        borderColor: 'rgba(18, 0, 118)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Aproximación de Fourier Marco Teórico',
+                        data: fValuesTeorico5,
+                        borderColor: 'rgba(249, 245, 0)',
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Tiempo (t)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Amplitud'
+                        }
+                    }
+                }
+            }
+        });
+      </script>
+      {% endif %}
+      <div style="width: 1000px; height=400px">
+        {% if t_values %}
+        <ul>
+            <li><h5>Período: {{ T }}</h5></li>
+            <li>
+                <h5>Coeficientes de la Serie de Fourier: <br>
+                a_0 = {{a0_10}}, <br>
+                a_n = {{an_10}}, <br>
+                b_n = {{bn_10}}
+                </h5>
+            </li>
+            <li><h5>Valor de N: {{ N_10 }}</h5></li>
+            <li><h5>Ecuación de la serie de Fourier Trigonométrica:<br> 
+                {{ fourier_equation_10 }}
+            </h5></li>
+        </ul>
+        <div>
+          <canvas id="fourierChart3" width="800" height="400"></canvas>
+        </div>
+        <script>
+          const ctx_2 = document.getElementById('fourierChart3').getContext('2d');
+          const tValues3 = {{ t_values|safe }};
+          const originalValues3 = {{ original_values|safe }};
+          const fValues10 = {{ f_values_10|safe }};
+          const fValuesTeorico10 = {{ f_values_teorico_10|safe }};
+  
+          new Chart(ctx_2, {
+              type: 'line',
+              data: {
+                  labels: tValues3,
+                  datasets: [
+                      {
+                          label: 'Función Original',
+                          data: originalValues3,
+                          borderColor: 'rgba(255, 0, 0)',
+                          borderWidth: 2,
+                          fill: false,
+                          pointRadius: 0
+                      },
+                      {
+                          label: 'Aproximación de Fourier',
+                          data: fValues10,
+                          borderColor: 'rgba(18, 0, 118)',
+                          borderWidth: 2,
+                          fill: false,
+                          pointRadius: 0
+                      },
+                      {
+                          label: 'Aproximación de Fourier Marco Teórico',
+                          data: fValuesTeorico10,
+                          borderColor: 'rgba(249, 245, 0)',
+                          borderWidth: 2,
+                          fill: false,
+                          pointRadius: 0
+                      }
+                  ]
+              },
+              options: {
+                  scales: {
+                      x: {
+                          type: 'linear',
+                          title: {
+                              display: true,
+                              text: 'Tiempo (t)'
+                          }
+                      },
+                      y: {
+                          title: {
+                              display: true,
+                              text: 'Amplitud'
+                          }
+                      }
+                  }
+              }
+          });
+        </script>
+        {% endif %}
+    </div>
+  </body>
 </html>
